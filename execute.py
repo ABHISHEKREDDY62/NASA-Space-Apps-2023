@@ -1,7 +1,7 @@
 from flask import Flask, render_template, session, request, redirect, url_for,flash
 from sentence_transformers import SentenceTransformer, util
 import pandas as pd
-
+import string   
 
 #from search import *
 #from get_pdf_details import *
@@ -44,13 +44,28 @@ def search():
 def after_search(pdf_id):
     data=pd.read_csv("final_training_data.csv")
     description=data[data["Document ID"]==int(pdf_id)]["Description"].values[0]
-    print(description)
+    description=description.split(",")
+    new=[]
+    for i in range(len(description)):
+        description[i] = description[i].translate(str.maketrans('', '', string.punctuation))
+        if i==1:
+            new.append("Document Type: "+description[i])
+        elif i==2:
+            new.append("Date Acquired: "+description[i])
+        elif i==3:
+            new.append("Publication Date: "+description[i])
+        elif i==4:
+            new.append("Publication Information: "+description[i])
+        else:
+            new.append(description[i])
+        
+            
     summary=data[data["Document ID"]==int(pdf_id)]["Summary"].values[0]
     print("this summary",summary)
     print(data.columns)
     #generate_wordcloud(pdf_id)
     #cleaned_data(pdf_id)
-    return render_template("after_search.html", details = description,ID=pdf_id,summary=summary)
+    return render_template("after_search.html", details = new[:-2],ID=pdf_id,summary=summary)
 
 @app.route("/embed")
 def embed():
