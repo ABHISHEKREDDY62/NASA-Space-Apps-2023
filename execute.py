@@ -18,16 +18,16 @@ def search():
     q = request.form["search"]
     print(q)
     l=[]
-    data=pd.read_csv("senetence_similarity.csv")
-    # model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-    # data["Summary"]=[str(i) for i in data["Summary"].values]
-    # for i in data["Summary"].values:
-    #     embedding_1= model.encode(q, convert_to_tensor=True)
-    #     embedding_2 = model.encode(i, convert_to_tensor=True)
-    #     l.append(util.pytorch_cos_sim(embedding_1, embedding_2))
-    # data["similarity"]=l
-    # data=data.sort_values(by="similarity",ascending=False)
-    # data.to_csv("senetence_similarity.csv")
+    data=pd.read_csv("damages.csv")
+    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+    data["Summary"]=[str(i) for i in data["Summary"].values]
+    for i in data["Summary"].values:
+        embedding_1= model.encode(q, convert_to_tensor=True)
+        embedding_2 = model.encode(i, convert_to_tensor=True)
+        l.append(util.pytorch_cos_sim(embedding_1, embedding_2))
+    data["similarity"]=l
+    data=data.sort_values(by="similarity",ascending=False)
+    data.to_csv("senetence_similarity.csv")
     document_id=data["Document ID"].values[:10]
     print(data["similarity"].values)
     # results = search_on_keyword(q)
@@ -42,11 +42,17 @@ def search():
 
 @app.route("/pdf_details/<pdf_id>", methods=["POST", "GET"])
 def after_search(pdf_id):
-    data=pd.read_csv("final_training_data.csv")
+    data=pd.read_csv("damages.csv")
     description=data[data["Document ID"]==int(pdf_id)]["Description"].values[0]
+    section=data[data["Document ID"]==int(pdf_id)]["section"].values[0]
+    section_data=data[data["Document ID"]==int(pdf_id)]["values"].values
     description=description.split(",")
     new=[]
+    new.append("NASA-STD-5018 Section :"+section)
+    new.append("Current Language :"+section_data)
+
     for i in range(len(description)):
+        
         description[i] = description[i].translate(str.maketrans('', '', string.punctuation))
         if i==1:
             new.append("Document Type: "+description[i])
@@ -58,6 +64,8 @@ def after_search(pdf_id):
             new.append("Publication Information: "+description[i])
         else:
             new.append(description[i])
+            
+        
         
             
     summary=data[data["Document ID"]==int(pdf_id)]["Summary"].values[0]
