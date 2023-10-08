@@ -1,6 +1,6 @@
 # NASA-Space-Apps-2023
-Flask Web Framework
-**run execute.py**
+
+**run execute.py**: Flask Web Framework
 
 **data.py**: Selenium Bot to glean pdfs pertaining to the technical standards mentioned in NASA STD 5018
 
