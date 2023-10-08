@@ -8,4 +8,4 @@ Flask Web Framework
 **sentence_similarity.py**: Code for sentence transformer to calculate sentence similarity of the generated summary & user input.
 
 
-<img width="646" alt="image" src="https://github.com/rahul9115/NASA-Space-Apps-2023/assets/46648019/596794b5-b16d-4ebb-b487-c0c93e8bd63f">
+
